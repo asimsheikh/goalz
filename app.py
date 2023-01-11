@@ -86,6 +86,9 @@ def api():
         '''
         focus_areas = [ FocusAreaView(FocusArea(**focus_area)) for focus_area in db.get('focus_areas') ]
         return render_template_string(PAGE, data={'focus_areas': focus_areas})
+    elif action == 'delete_focus_area':
+        db.delete('focus_areas', request.form['id'])
+        return ''
     return ''
 
 @app.route('/')
@@ -95,7 +98,7 @@ def index():
                 <form class="m-2 flex flex-col" 
                     hx-post="/api"
                     hx-target="[id='add_focus_area']"
-                    # hx-vals='{ "action": "add_focus_area" }'
+                    hx-vals='{ "action": "add_focus_area" }'
                     hx-swap="outerHTML">
                     <div class="flex flex-row">
                         <div class="flex flex-col rounded-md w-4/12 mx-2 p-2">
