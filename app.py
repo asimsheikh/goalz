@@ -61,7 +61,7 @@ def api():
     action = request.form['action']
     if action == 'add_focus_area':
         db.add('focus_areas', FocusArea(name=request.form['focus_area_name']).dict())  # type: ignore
-        return '''
+        PAGE = '''
             <div class="m-2" id="add_focus_area">
                 <form class="m-2 flex flex-col" 
                     hx-post="/api"
@@ -78,12 +78,14 @@ def api():
                 </form>
             </div>
             <div class="m-2" id="focus_areas" hx-swap-oob="true">
-                <p class="text-2xl py-2 font-semibold">Tasks</p>
+                <p class="text-2xl py-2 font-semibold">Focus Areas</p>
                  {% for focus_area in data.focus_areas %}
                  {{ focus_area.render() | safe }}
                  {% endfor%}
             </div>
         '''
+        focus_areas = [ FocusAreaView(FocusArea(**focus_area)) for focus_area in db.get('focus_areas') ]
+        return render_template_string(PAGE, data={'focus_areas': focus_areas})
     return ''
 
 @app.route('/')
@@ -105,10 +107,12 @@ def index():
                 </form>
             </div>
             <div class="m-2" id="focus_areas">
-                <p class="text-2xl py-2 font-semibold">Tasks</p>
+                <p class="text-2xl py-2 font-semibold">Focus Areas</p>
+                <div class="">
                  {% for focus_area in data.focus_areas %}
                  {{ focus_area.render() | safe }}
                  {% endfor%}
+                </div>
             </div>
     '''
 
