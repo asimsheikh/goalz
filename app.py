@@ -1,7 +1,7 @@
 from flask import Flask, request, render_template_string
 from persist import Persist
 from head import HEAD
-from models import FocusArea 
+from models import FocusArea, Task
 
 db = Persist()
 app = Flask(__name__)
@@ -94,6 +94,8 @@ def api():
         return ''
     elif action == 'add_task':
         print(request.form)
+        task = Task(name=request.form['task_name'], focus_area_id=request.form['focus_area_id'])
+        db.add('tasks', task.dict())
         focus_areas = [ FocusAreaView(FocusArea(**focus_area)) for focus_area in db.get('focus_areas') ]
         PAGE = '''
             <div id="add_task">
