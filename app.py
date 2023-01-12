@@ -83,13 +83,44 @@ def api():
                  {{ focus_area.render() | safe }}
                  {% endfor%}
             </div>
+            <div>
+              <p>Focus area tasks</p>
+            </div>
         '''
         focus_areas = [ FocusAreaView(FocusArea(**focus_area)) for focus_area in db.get('focus_areas') ]
         return render_template_string(PAGE, data={'focus_areas': focus_areas})
     elif action == 'delete_focus_area':
         db.delete('focus_areas', request.form['id'])
         return ''
-    return ''
+    elif action == 'add_task':
+        print(request.form)
+        focus_areas = [ FocusAreaView(FocusArea(**focus_area)) for focus_area in db.get('focus_areas') ]
+        PAGE = '''
+            <div id="add_task">
+              <p class="bg-red-100 p-2">Focus area tasks</p>
+                <form class="m-2 flex flex-col" 
+                    hx-post="/api"
+                    hx-target="[id='add_task']"
+                    hx-vals='{ "action": "add_task" }'
+                    hx-swap="outerHTML">
+                    <div class="flex flex-row">
+                        <div class="flex flex-col rounded-md w-4/12 mx-2 p-2">
+                            <label class="text-xl font-semibold" for="add_task">Add Task</label>
+                            <input class="p-2 border-2 rounded-md" type="text" value="" name="task_name" id="task_name" autofocus onfocus="this.select()"/>
+                            <select class="p-2 border-2 rounded-md w-1/2" name="focus_area_id" id="focus_area_id">
+                            {% for focus_area in data.focus_areas %}
+                                <option value="{{focus_area.focus_area.id}}">{{ focus_area.focus_area.name}}</option>
+                            {% endfor %}
+                            </select>
+                            <input class="bg-black text-white my-2 py-2 rounded-md w-1/3" type="submit" value="Add" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+        '''
+        return render_template_string(PAGE, data={'focus_areas': focus_areas})
+    else:
+        return '<p class="bg-red-700 p-10">This is not a known action</p>'
 
 @app.route('/')
 def index():
@@ -113,9 +144,30 @@ def index():
                 <p class="text-2xl py-2 font-semibold">Focus Areas</p>
                 <div class="">
                  {% for focus_area in data.focus_areas %}
-                 {{ focus_area.render() | safe }}
+                    {{ focus_area.render() | safe }}
                  {% endfor%}
                 </div>
+            </div>
+            <div id="add_task">
+              <p class="bg-red-100 p-2">Focus area tasks</p>
+                <form class="m-2 flex flex-col" 
+                    hx-post="/api"
+                    hx-target="[id='add_task']"
+                    hx-vals='{ "action": "add_task" }'
+                    hx-swap="outerHTML">
+                    <div class="flex flex-row">
+                        <div class="flex flex-col rounded-md w-4/12 mx-2 p-2">
+                            <label class="text-xl font-semibold" for="add_task">Add Task</label>
+                            <input class="p-2 border-2 rounded-md" type="text" value="" name="task_name" id="task_name" autofocus onfocus="this.select()"/>
+                            <select class="p-2 border-2 rounded-md w-1/2" name="focus_area_id" id="focus_area_id">
+                            {% for focus_area in data.focus_areas %}
+                                <option value="{{focus_area.focus_area.id}}">{{ focus_area.focus_area.name}}</option>
+                            {% endfor %}
+                            </select>
+                            <input class="bg-black text-white my-2 py-2 rounded-md w-1/3" type="submit" value="Add" />
+                        </div>
+                    </div>
+                </form>
             </div>
     '''
 
