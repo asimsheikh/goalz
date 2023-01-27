@@ -69,7 +69,7 @@ def api():
                 <form class="m-2 flex flex-col" 
                     hx-post="/api"
                     hx-target="[id='add_focus_area']"
-                    # hx-vals='{ "action": "add_focus_area" }'
+                    hx-vals='{ "action": "add_focus_area" }'
                     hx-swap="outerHTML">
                     <div class="flex flex-row">
                         <div class="flex flex-col rounded-md w-4/12 mx-2 p-2">
@@ -83,7 +83,7 @@ def api():
             <div class="m-2" id="focus_areas" hx-swap-oob="true">
                 <p class="text-2xl py-2 font-semibold">Focus Areas</p>
                  {% for focus_area in data.focus_areas %}
-                 {{ focus_area.render() | safe }}
+                    {{ focus_area.render() | safe }}
                  {% endfor%}
             </div>
             <div>
@@ -195,74 +195,3 @@ def index():
 
     focus_areas = [ FocusAreaView(FocusArea(**focus_area)) for focus_area in db.get('focus_areas') ]
     return render_template_string(HEAD + PAGE, data={'focus_areas': focus_areas, 'tasks': db.get('tasks')})
-
-def sleeper(seconds: int):
-    sleep(seconds)
-
-THREADS: list[Thread] = []
-
-@app.get('/status')
-def status():
-    if THREADS[-1].is_alive():
-        return '''
-            <div hx-get="/status" hx-trigger="load delay:1s" hx-swap="outerHTML">
-                <p class="bg-green-200">Loading...</p>
-            </div>
-        '''
-    else:
-        return '''
-            <div hx-get="/status" hx-trigger="" hx-swap="outerHTML">
-                <p class="bg-red-200">Loaded</p>
-            </div>
-        '''
-
-@app.route('/downloads', methods=['GET', 'POST'])
-def downloads():
-    if request.method == 'POST':
-        seconds = int(request.form['sleep_seconds'])
-        thread = Thread(target=sleeper, args=(seconds,))
-        thread.start()
-        THREADS.append(thread)
-        PAGE = '''
-            <form class="m-2 flex flex-col" id="sleep"
-                hx-post="/downloads"
-                hx-target="[id='sleep']"
-                hx-vals='{"id": "sleep", "action": "start_sleep"}'
-                hx-swap="outerHTML">
-                <div class="flex flex-row">
-                    <div class="flex flex-col border-2 rounded-md w-4/12 mx-2 p-2">
-                        <label class="text-sm" for="sleep_seconds">Time to Sleep</label>
-                        <input type="text" value="" name="sleep_seconds" id="sleep_seconds" autofocus onfocus="this.select()"/>
-                    </div>
-                </div>
-                    <div>
-                        <input class="bg-black text-white px-4 m-2 py-2 w-1/12 rounded-md" type="submit" value="Save" />
-                    </div>
-            </form>
-            <div hx-get="/status" hx-trigger="load delay:1s" hx-swap="outerHTML">
-                <p>Loading...</p>
-            </div>
-        '''
-        return render_template_string(HEAD + PAGE)
-        
-    PAGE = '''
-        <body>
-            <p>Initial running attempt...</p>
-            <form class="m-2 flex flex-col" id="sleep"
-                hx-post="/downloads"
-                hx-target="[id='sleep']"
-                hx-vals='{"id": "sleep", "action": "start_sleep"}'
-                hx-swap="outerHTML">
-                <div class="flex flex-row">
-                    <div class="flex flex-col border-2 rounded-md w-4/12 mx-2 p-2">
-                        <label class="text-sm" for="sleep_seconds">Time to Sleep</label>
-                        <input type="text" value="" name="sleep_seconds" id="sleep_seconds" autofocus onfocus="this.select()"/>
-                    </div>
-                </div>
-                    <div>
-                        <input class="bg-black text-white px-4 m-2 py-2 w-1/12 rounded-md" type="submit" value="Save" />
-                    </div>
-            </form>
-        </body>
-    '''
-    return render_template_string(HEAD + PAGE, db={'threads': THREADS})
