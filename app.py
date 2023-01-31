@@ -195,3 +195,31 @@ def index():
 
     focus_areas = [ FocusAreaView(FocusArea(**focus_area)) for focus_area in db.get('focus_areas') ]
     return render_template_string(HEAD + PAGE, data={'focus_areas': focus_areas, 'tasks': db.get('tasks')})
+
+@app.route('/test', methods=['GET', 'POST'])
+def test():
+    if request.method == 'POST':
+        return str(request.form)
+    PAGE = '''
+    <body>
+        <div class="ml-4">
+            <p class="text-xl font-bold">Hello World</p>
+            <p>Then entering some more text</p>
+            <ul class="ml-6 list-disc">
+              <li>Test the idea of using formData object on forms</li>
+            </ul>
+        </div>
+        <div class="ml-4 mt-4">
+            <form hx-post="/test">
+                <p>
+                    <label for="first-name">First Name</label>
+                    <input id="first-name" name="first-name" type="text" class="border-2" value="Asim Sardar"/>
+                </p>
+                <p>
+                    <input type="submit" class="border-2 p-2" value="Send"/>
+                </p>
+            </form>
+        </div>
+    </bodv>
+    '''
+    return render_template_string(HEAD + PAGE)
