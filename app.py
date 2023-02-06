@@ -1,6 +1,3 @@
-from time import sleep
-from threading import Thread
-
 from flask import Flask, request, render_template_string
 from persist import Persist
 from head import HEAD
@@ -58,6 +55,10 @@ class FocusAreaView:
                     </form>
                 </div>
                 '''
+
+@app.post('/testing')
+def testing():
+    return '<p class="text-xl">go to gym</p>'
 
 @app.post('/api')
 def api():
@@ -166,7 +167,7 @@ def index():
                 <p class="text-2xl py-2 font-semibold">Tasks</p>
                 <div class="">
                  {% for task in data.tasks %}
-                    <p>{{ task.name }} | {{ task.focus_area_id }}</p>
+                    <p>{{ task.name }}</p>
                  {% endfor%}
                 </div>
             </div>
