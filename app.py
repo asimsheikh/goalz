@@ -199,7 +199,7 @@ def index():
 @app.route('/test', methods=['GET', 'POST'])
 def test():
     if request.method == 'POST':
-        return str(request.form)
+        return str(list(request.form.items()))
     PAGE = '''
     <body>
         <div class="ml-4">
@@ -210,15 +210,21 @@ def test():
             </ul>
         </div>
         <div class="ml-4 mt-4">
-            <form hx-post="/test">
+            <form hx-post="/test" hx-target="#form-data">
                 <p>
                     <label for="first-name">First Name</label>
                     <input id="first-name" name="first-name" type="text" class="border-2" value="Asim Sardar"/>
                 </p>
                 <p>
+                    <label for="last-name">Last Name</label>
+                    <input id="last-name" name="last-name" type="text" class="border-2" value="Sheikh"/>
+                </p>
+                <p>
                     <input type="submit" class="border-2 p-2" value="Send"/>
                 </p>
             </form>
+        </div>
+        <div id="form-data" class="ml-4 mt-4">
         </div>
     </bodv>
     '''
