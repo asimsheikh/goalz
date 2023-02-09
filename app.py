@@ -58,15 +58,14 @@ class FocusAreaView:
 
 @app.post('/testing')
 def testing():
-    json = request.json or {}
-    if json and json['action'] == 'add_comment':
-        # return json['payload']
-        return '<p>Comment</p>'
-
     if 'name' in request.form:
         return '<p class="text-xl">help to gym</p>'
 
-    return 'Nothing'
+    json = request.json or {}
+    if json and json['action'] == 'add_comment':
+        return json['payload']
+
+    raise Exception
 
 @app.get('/comments')
 def comments():

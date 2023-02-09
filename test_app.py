@@ -15,7 +15,8 @@ def client(app):
 
 def test_post(client):
     response: Response = client.post('/testing', data={'name':'go to gym'})
-    if not response.status_code == 200: raise Exception
+    if not response.status_code == 200: 
+        raise Exception
 
     x = BeautifulSoup(response.data, 'html.parser').p
     x.attrs.pop('class') if 'class' in x.attrs else ''
@@ -23,7 +24,8 @@ def test_post(client):
     assert x == y
 
 def test_add_comment(client):
+
     data = { 'action': 'add_comment', 'payload': {'date': '07-02-2023', 'comment': 'We are winning'} }
     response: Response = client.post('/testing', json=data)
-    # assert response.json == data['payload']
-    assert response.data == '<p>Comment</p>'
+    assert response.json == data['payload']
+    # assert response.data == b'<p>Comment</p>'
