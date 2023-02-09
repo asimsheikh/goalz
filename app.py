@@ -1,3 +1,5 @@
+from datetime import datetime 
+
 from flask import Flask, request, render_template_string
 from persist import Persist
 from head import HEAD
@@ -56,14 +58,24 @@ class FocusAreaView:
                 </div>
                 '''
 
+def to_datetime(js_date: str) -> datetime:
+    parsed_date = datetime.strptime(js_date, "%Y-%m-%dT%H:%M:%S.%fZ")
+    return parsed_date
+
+def to_js_date(date: datetime) -> str:
+    return f"{date.isoformat()}Z"
+
 @app.post('/testing')
 def testing():
-    if 'name' in request.form:
-        return '<p class="text-xl">help to gym</p>'
-
     json = request.json or {}
-    if json and json['action'] == 'add_comment':
-        return json['payload']
+
+    if not json:
+        raise Exception 
+
+    if json['action'] == 'add_comment':
+        return f"<p>{request.json['payload']['comment']}</p>"
+        # add the comment to the db
+        # return the fragment
 
     raise Exception
 
