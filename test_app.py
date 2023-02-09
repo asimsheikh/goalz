@@ -19,6 +19,11 @@ def test_post(client):
 
     x = BeautifulSoup(response.data, 'html.parser').p
     x.attrs.pop('class') if 'class' in x.attrs else ''
-    y = BeautifulSoup('<p>go to gym</p>', 'html.parser').p
+    y = BeautifulSoup('<p>help to gym</p>', 'html.parser').p
     assert x == y
 
+def test_add_comment(client):
+    data = { 'action': 'add_comment', 'payload': {'date': '07-02-2023', 'comment': 'We are winning'} }
+    response: Response = client.post('/testing', json=data)
+    # assert response.json == data['payload']
+    assert response.data == '<p>Comment</p>'

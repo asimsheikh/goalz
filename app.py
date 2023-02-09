@@ -58,7 +58,35 @@ class FocusAreaView:
 
 @app.post('/testing')
 def testing():
-    return '<p class="text-xl">go to gym</p>'
+    json = request.json or {}
+    if json and json['action'] == 'add_comment':
+        # return json['payload']
+        return '<p>Comment</p>'
+
+    if 'name' in request.form:
+        return '<p class="text-xl">help to gym</p>'
+
+    return 'Nothing'
+
+@app.get('/comments')
+def comments():
+    return 'Comments section'
+
+@app.get('/routes')
+def routes():
+    route_urls = [str(rule) for rule in app.url_map.iter_rules()]
+    page = '''
+        <section>
+            <ul>
+            {% for route_url in data.route_urls %}
+                <li>
+                    <a href="{{route_url}}">{{ route_url }}</a>
+                </li>
+            {% endfor%}
+            </ul>
+        </section>
+    '''
+    return render_template_string(page, data={'route_urls': route_urls})
 
 @app.post('/api')
 def api():
