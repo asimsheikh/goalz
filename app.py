@@ -1,6 +1,6 @@
 from datetime import datetime 
 
-from flask import Flask, request, render_template_string
+from flask import Flask, request, render_template_string, render_template
 from persist import Persist
 from head import HEAD
 from models import FocusArea, Task
@@ -235,6 +235,12 @@ def index():
 
     focus_areas = [ FocusAreaView(FocusArea(**focus_area)) for focus_area in db.get('focus_areas') ]
     return render_template_string(HEAD + PAGE, data={'focus_areas': focus_areas, 'tasks': db.get('tasks')})
+
+@app.route('/radio', methods=['GET', 'POST'])
+def radio():
+    if request.method == 'POST':
+        return request.form
+    return render_template('index.html') 
 
 @app.route('/test', methods=['GET', 'POST'])
 def test():
