@@ -13,7 +13,7 @@
     <main>
         <div id="data">
             <input type="number" name="min_time" id="min_time" value=1> <br>
-            <input type="number" name="max_time" id="max_time" value=20> <br>
+            <input type="number" name="max_time" id="max_time" value=4> <br>
             <button id="start_button" onclick="begin()">Start</button>
         </div>
         <p id="time">Time..</p>
@@ -24,15 +24,27 @@
 
     let begin = () => {
 
+
+        let state = { count: 0 }
+        let handler = {
+            set: function (target, prop, value) {
+                console.log("In the set handler function")
+                document.getElementById('time').innerHTML = `${Math.round(value)} seconds left`
+                target[prop] = value
+            }
+        }
+
+        let proxy = new Proxy(state, handler)
         console.log('beginning timer...')
         let min = parseInt($('min_time').value)
         let max = parseInt($('max_time').value)
-        let countdown = Math.random() * (max - min) + min
+
+        proxy.count = Math.random() * (max - min) + min
         $('data').style.display = "none"
 
         let timer = () => {
-            countdown = countdown - 1
-            if (countdown <= 0) {
+            proxy.count = proxy.count - 1
+            if (proxy.count <= 0) {
                 clearInterval(counter)
                 $('data').style.display = "block"
                 $('time').innerHTML = 'Finished..'
@@ -41,7 +53,6 @@
 
                 return
             }
-            $('time').innerHTML = `${Math.round(countdown)} seconds left`
         }
 
         let counter = setInterval(timer, 1000)
