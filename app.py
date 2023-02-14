@@ -242,6 +242,10 @@ def radio():
         return request.form
     return render_template('index.html') 
 
+@app.route('/timer')
+def timer():
+    return render_template('timer.html')
+
 @app.route('/test', methods=['GET', 'POST'])
 def test():
     if request.method == 'POST':

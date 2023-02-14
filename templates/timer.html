@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic Timer App</title>
+</head>
+
+<body>
+    <h1>Timer App</h1>
+    <main>
+        <div id="data">
+            <input type="number" name="min_time" id="min_time" value=1> <br>
+            <input type="number" name="max_time" id="max_time" value=20> <br>
+            <button id="start_button" onclick="begin()">Start</button>
+        </div>
+        <p id="time">Time..</p>
+    </main>
+</body>
+<script>
+    let $ = (id) => document.getElementById(id)
+
+    let begin = () => {
+
+        console.log('beginning timer...')
+        let min = parseInt($('min_time').value)
+        let max = parseInt($('max_time').value)
+        let countdown = Math.random() * (max - min) + min
+        $('data').style.display = "none"
+
+        let timer = () => {
+            countdown = countdown - 1
+            if (countdown <= 0) {
+                clearInterval(counter)
+                $('data').style.display = "block"
+                $('time').innerHTML = 'Finished..'
+                let sound = new Audio('/static/notify.wav')
+                sound.play()
+
+                return
+            }
+            $('time').innerHTML = `${Math.round(countdown)} seconds left`
+        }
+
+        let counter = setInterval(timer, 1000)
+
+    }
+</script>
+
+</html>

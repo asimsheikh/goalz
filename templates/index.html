@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testing semantic html</title>
+</head>
+
+<body>
+    <h1>Car for Sale</h1>
+
+    <!-- <section>
+        <h2>Details</h2>
+        <dl>
+            <dt>Make</dt>
+            <dd>Toyota</dd>
+            <dt>Model</dt>
+            <dd>Corolla</dd>
+            <dt>Year</dt>
+            <dd>2010</dd>
+        </dl>
+    </section> -->
+
+    <!-- <section>
+        <h2>Repair History</h2>
+        <ol reversed>
+            <li>New Brakes (2020)</li>
+            <li>New Muffler (2021)</li>
+            <li>New Tires (2022)</li>
+        </ol>
+    </section> -->
+
+    <!-- <section>
+        <h2>Reasons to Buy</h2>
+        <ul>
+            <li>Well-maintained</li>
+            <li>Low miles</li>
+            <li>Custom speaker system</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Contact Me</h2>
+        <address>
+            <span>Phone</span><span>555-555-1111</span>
+            <span>E-mail</span><span>noreply@google.com</span>
+        </address>
+    </section> -->
+    <section>
+        <h1>Sign Up</h1>
+        <form action="/radio" method="POST">
+            <p>
+                <label for="user_first_name">First Name</label> <br>
+                <input type="text" name="user_first_name" id="user_first_name">
+            </p>
+            <p>
+                <label for="user_last_name">Last Name</label> <br>
+                <input type="text" name="user_last_name" id="user_last_name">
+            </p>
+            <p>
+                <label for="user_email">Email</label> <br>
+                <input type="email" name="user_email" id="user_email">
+            </p>
+            <p>
+                <label for="user_password">Password</label> <br>
+                <input type="password" name="user_password" id="user_password">
+            </p>
+            <p>
+                <label for="user_confirm_password">Confirm Password</label> <br>
+                <input type="password" name="user_confirm_password" id="user_confirm_password">
+            </p>
+            <p>
+                <button type="submit">Sign Up</button>
+            </p>
+        </form>
+    </section>
+
+    <section>
+        <h1>Book a Table</h1>
+        <form action="/radio" method="POST">
+            <fieldset>
+                <label>
+                    <input type="radio" name="size" value="2"> 2 person table <br>
+                </label>
+                <label>
+                    <input type="radio" name="size" value="4"> 4 person table <br>
+                </label>
+                <label>
+                    <input type="radio" name="size" value="6"> 6 person table <br>
+                </label>
+            </fieldset>
+            <fieldset>
+                <input type="radio" name="location" value="outdoors"> Outdoors <br>
+                <input type="radio" name="location" value="indoors"> Indoors <br>
+            </fieldset>
+            <button type="submit">Book a table</button>
+        </form>
+    </section>
+
+    <section>
+        <h1>Book at Table 2</h1>
+        <form action="/radio" method="POST">
+            <p>
+                <label for="booking_date">Booking Date</label>
+                <input type="date" name="booking_date" id="booking_date">
+            </p>
+            <p>
+                <label for="booking_people">Number of people</label>
+                <input type="range" name="booking_people" id="booking_people" min="1" max="4" value="4"
+                    oninput="this.nextElementSibling.value=this.value">
+                <output>4</output>
+            </p>
+            <p>
+                <label for="booking_location">Location</label>
+                <input id="booking_location" name="booking_location" list="locations">
+                <datalist id="locations">
+                    <option value="Downtown">Downtown</option>
+                    <option value="Uptown">Uptown</option>
+                </datalist>
+            </p>
+            <p>
+                <button type="submit">Book Table</button>
+            </p>
+        </form>
+    </section>
+
+</body>
+
+</html>
