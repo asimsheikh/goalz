@@ -11,10 +11,11 @@
 <body>
     <h1>Pebbles App</h1>
     <main>
-        <section>
-            <div id="pebble1" class="pebble">&nbsp;</div>
+        <section id="pebbles-display">
+            <!-- <div id="pebble1" class="pebble">&nbsp;</div>
             <div id="pebble2" class="pebble">&nbsp;</div>
             <div id="pebble3" class="pebble">&nbsp;</div>
+            <div id="pebble4" class="pebble">&nbsp;</div> -->
         </section>
         <section>
             <p id="count"></p>
@@ -40,17 +41,26 @@
 </style>
 <script>
     let $ = (id) => document.getElementById(id)
-    let state = { pebble1: false, pebble2: false, pebble3: false }
+    let state = { pebble1: false, pebble2: false, pebble3: false, pebble4: false, pebble5: false, pebble6: false }
 
-    $('pebble1').addEventListener("click", event => clickHandler(event))
-    $('pebble2').addEventListener("click", event => clickHandler(event))
-    $('pebble3').addEventListener("click", event => clickHandler(event))
+    Object.entries(state).forEach(([name, status]) => {
+        let el = document.createElement('div')
+        el.id = name
+        el.style.borderRadius = '50%'
+        el.style.width = '3rem'
+        el.style.height = '3rem'
+        el.style.margin = '1rem 0'
+        el.style.backgroundColor = 'red'
+        el.addEventListener("click", event => clickHandler(event))
+        el.appendChild(document.createTextNode(''))
+        $('pebbles-display').appendChild(el)
+    })
 
     const clickHandler = (event) => {
         state[event.target.id] = !state[event.target.id]
         const style = state[event.target.id] == true ? 'green' : 'red'
         event.target.style.backgroundColor = style
-        const count = Object.entries(state).map(item => item[1] ? 1 : 0).reduce((a, b) => a + b, 0)
+        const count = Object.entries(state).map(([name, status]) => status ? 1 : 0).reduce((a, b) => a + b, 0)
         $('count').innerHTML = count
     }
 </script>
