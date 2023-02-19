@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pebbles App</title>
+</head>
+
+<body>
+    <h1>Pebbles App</h1>
+    <main>
+        <section>
+            <div id="pebble1" class="pebble">&nbsp;</div>
+            <div id="pebble2" class="pebble">&nbsp;</div>
+            <div id="pebble3" class="pebble">&nbsp;</div>
+        </section>
+        <section>
+            <p id="count"></p>
+        </section>
+    </main>
+</body>
+<style>
+    body {
+        background: black;
+    }
+
+    .pebble {
+        background-color: red;
+        margin: 1rem 0;
+        width: 3rem;
+        height: 3rem;
+        border-radius: 50%;
+    }
+
+    #count {
+        color: white;
+    }
+</style>
+<script>
+    let $ = (id) => document.getElementById(id)
+    let state = { pebble1: false, pebble2: false, pebble3: false }
+
+    $('pebble1').addEventListener("click", event => clickHandler(event))
+    $('pebble2').addEventListener("click", event => clickHandler(event))
+    $('pebble3').addEventListener("click", event => clickHandler(event))
+
+    const clickHandler = (event) => {
+        state[event.target.id] = !state[event.target.id]
+        const style = state[event.target.id] == true ? 'green' : 'red'
+        event.target.style.backgroundColor = style
+        const count = Object.entries(state).map(item => item[1] ? 1 : 0).reduce((a, b) => a + b, 0)
+        $('count').innerHTML = count
+    }
+</script>
+
+</html>
