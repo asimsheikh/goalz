@@ -250,6 +250,10 @@ def timer():
 def pebbles():
     return render_template('pebbles.html')
 
+@app.route('/flex')
+def flex():
+    return render_template('flex.html')
+
 @app.route('/test', methods=['GET', 'POST'])
 def test():
     if request.method == 'POST':
