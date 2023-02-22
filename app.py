@@ -254,6 +254,10 @@ def pebbles():
 def flex():
     return render_template('flex.html')
 
+@app.route('/grid')
+def grid():
+    return render_template('grid.html')
+
 @app.route('/test', methods=['GET', 'POST'])
 def test():
     if request.method == 'POST':
