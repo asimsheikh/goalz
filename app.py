@@ -1,6 +1,6 @@
 from datetime import datetime 
 
-from flask import Flask, request, render_template_string, render_template
+from flask import Flask, request, render_template_string
 from persist import Persist
 from head import HEAD
 
@@ -33,8 +33,21 @@ def routes():
 @app.post('/api')
 def api():
     action = request.form['action']
-    if action == 'add_focus_area':
-        return render_template_string(PAGE, data={'focus_areas': focus_areas})
+    payload = eval(request.form['payload'])
+    if action == 'toggle_pebble':
+        # get the pebble with id and reverse
+        # update the db with new pebble status
+        # return the colored pebble        
+        pd = [ pebble for pebble in db.get('pebbles') if pebble['id'] == payload['id'] ][0]
+        status = not pd['status']
+        db.update('pebbles', payload['id'], {'id': payload['id'], 'status': status})
+        pebble = f'''<div class="pebble {'active' if status else 'inactive'}"
+                hx-post="/api"
+                hx-vals='{{ "action": "toggle_pebble", "payload": {{"id": "{payload['id']}"}} }}'
+                hx-swap="outerHTML">
+            <p></p>
+        </div>'''
+        return pebble
     elif action == 'add_task':
         return 'Error' 
     else:
@@ -42,5 +55,39 @@ def api():
 
 @app.route('/')
 def index():
-    PAGE = '''This is a new page'''
-    return render_template_string(HEAD + PAGE, data={})
+    PAGE = ''' 
+            <style>
+            #pebbles {
+                margin: 2rem;
+                display: grid;
+                grid-template-rows: repeat(4, auto);
+                grid-template-columns: repeat(24, auto);
+            }
+
+             .pebble {
+                margin: 0.5rem;
+                width: 2rem;
+                height: 2rem;
+            }
+
+             .active {
+                background-color: green;
+             }
+
+            .inactive {
+                background-color: #f443361a;
+            }
+
+            </style>
+            <section id="pebbles">
+            {% for pebble in data.pebbles %}
+                <div class="pebble {{ 'active' if pebble.status else 'inactive'}}"
+                     hx-post="/api"
+                     hx-vals='{ "action": "toggle_pebble", "payload": {"id": "{{ pebble.id }}" }}'
+                     hx-swap="outerHTML">
+                    <p></p>
+                </div>
+            {% endfor%}
+            </section>
+    '''
+    return render_template_string(HEAD + PAGE, data={'pebbles': db.get('pebbles')})

@@ -1,10 +1,8 @@
 from uuid import uuid4
-from datetime import datetime
 from pydantic import BaseModel, Field, validator
-class Comment(BaseModel):
+class Pebble(BaseModel):
     id: str | None = Field(default_factory=lambda: uuid4().hex)
-    date: datetime 
-    text: str 
+    index: int
 
     @validator('id')
     def validate_id(cls, v: str | None):
