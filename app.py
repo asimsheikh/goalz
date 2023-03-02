@@ -1,6 +1,6 @@
 from datetime import datetime 
 
-from flask import Flask, request, render_template_string
+from flask import Flask, request, render_template_string, render_template
 from persist import Persist
 from head import HEAD
 
@@ -42,6 +42,7 @@ def api():
         status = not pd['status']
         db.update('pebbles', payload['id'], {'id': payload['id'], 'status': status})
         pebble = f'''<div class="pebble {'active' if status else 'inactive'}"
+                data-tooltip="{payload['id']}"
                 hx-post="/api"
                 hx-vals='{{ "action": "toggle_pebble", "payload": {{"id": "{payload['id']}"}} }}'
                 hx-swap="outerHTML">
@@ -52,6 +53,10 @@ def api():
         return 'Error' 
     else:
         return '<p class="bg-red-700 p-10">This is not a known action</p>'
+
+@app.route('/grid')
+def grid():
+    return render_template('grid.html')
 
 @app.route('/')
 def index():
@@ -68,6 +73,17 @@ def index():
                 margin: 0.5rem;
                 width: 2rem;
                 height: 2rem;
+                position: relative;
+            }
+
+            .pebble:hover::after {
+                position: absolute;
+                top: -1.5rem;
+                left: 1rem;
+                content: attr(data-tooltip);
+                background: #000000bd;
+                color: white;
+                padding: 0.5rem;
             }
 
              .active {
@@ -78,16 +94,35 @@ def index():
                 background-color: #f443361a;
             }
 
+            #grid {
+                display: grid;
+            }
+
             </style>
-            <section id="pebbles">
-            {% for pebble in data.pebbles %}
-                <div class="pebble {{ 'active' if pebble.status else 'inactive'}}"
-                     hx-post="/api"
-                     hx-vals='{ "action": "toggle_pebble", "payload": {"id": "{{ pebble.id }}" }}'
-                     hx-swap="outerHTML">
-                    <p></p>
-                </div>
-            {% endfor%}
-            </section>
+            <script>
+                onClick = (e) => {
+                    console.log(e)
+                    e.preventDefault()
+                    let menu = document.createElement("div")
+                    menu.id = "ctxmenu"
+                    menu.style = `top:${e.pageY-10}px;left:${e.pageX-40}px`
+                    menu.onmouseleave = () => ctxmenu.outerHTML = ''
+                    menu.innerHTML = "<p>Option1</p><p>Option2</p><p>Option3</p><p>Option4</p><p onclick='alert(`Thank you!`)'>Upvote</p>"
+                    document.getElementById("pebbles").appendChild(menu)
+                }
+            </script>
+            <body>
+                <section id="pebbles" ondblclick="onClick(event)">
+                {% for pebble in data.pebbles %}
+                    <div class="pebble {{ 'active' if pebble.status else 'inactive'}}"
+                        data-tooltip="{{ pebble.id }}"
+                        hx-post="/api"
+                        hx-vals='{ "action": "toggle_pebble", "payload": {"id": "{{ pebble.id }}" }}'
+                        hx-swap="outerHTML">
+                        <p></p>
+                    </div>
+                {% endfor%}
+                </section>
+            </body>
     '''
     return render_template_string(HEAD + PAGE, data={'pebbles': db.get('pebbles')})
