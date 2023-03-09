@@ -11,6 +11,10 @@
 <style>
     #grid {
         display: grid;
+        grid-template-columns: 3fr 1fr;
+        grid-template-areas: 'a a'
+            'b .'
+            'c c';
     }
 
     .item {
@@ -36,6 +40,7 @@
 
     .item5 {
         background-color: lightpink;
+        grid-area: b;
     }
 </style>
 
@@ -49,7 +54,6 @@
             <div class="item item5">5</div>
         </section>
     </main>
-
 </body>
 
 </html>
