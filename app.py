@@ -33,7 +33,7 @@ def routes():
 @app.post('/api')
 def api():
     action = request.form['action']
-    payload = eval(request.form['payload'])
+    payload = eval(request.form.get('payload') or '1')
     if action == 'toggle_pebble':
         # get the pebble with id and reverse
         # update the db with new pebble status
@@ -50,7 +50,12 @@ def api():
         </div>'''
         return pebble
     elif action == 'add_task':
-        return 'Error' 
+        task_name = request.form['task']
+        task_exists = task_name in [ task['name'] for task in db.get('tasks') ]
+        if task_exists: return 'Task exists'
+        db.add('tasks', {'name': task_name})
+        return f'Added task {task_name}'
+        # return 'Error' 
     else:
         return '<p class="bg-red-700 p-10">This is not a known action</p>'
 
@@ -122,6 +127,19 @@ def index():
                         <p></p>
                     </div>
                 {% endfor%}
+                </section>
+                <section id="allocate_task">
+                    <form class="ml-10" 
+                       hx-post="/api"
+                       hx-vals='{ "action": "add_task" }'>
+                      <p> <label for="add_task">Add Task</label> </p>
+                      <p> <input class="border-2" type="text" id="add_task" name="task" list="task_list" autocomplete=off> </p>
+                        <datalist id="task_list">
+                            <option value="build pebbles app" />
+                            <option value="research Alicea course" />
+                        </datalist>
+                      <p> <button class="bg-black text-white px-4 py-2 mt-2">Add Task</button> </p>
+                    </form>
                 </section>
             </body>
     '''
