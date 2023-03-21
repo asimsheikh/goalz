@@ -52,16 +52,87 @@ def api():
     elif action == 'add_task':
         task_name = request.form['task']
         task_exists = task_name in [ task['name'] for task in db.get('tasks') ]
-        if task_exists: return 'Task exists'
-        db.add('tasks', {'name': task_name})
-        return f'Added task {task_name}'
-        # return 'Error' 
+        if not task_exists: 
+            db.add('tasks', {'name': task_name})
+        # return f'Added task {task_name}'
+        return render_template_string(''' 
+            <form class="" 
+                hx-post="/api"
+                hx-vals='{ "action": "add_task" }'>
+                <p> <input class="border-2" placeholder="add task..." type="text" id="add_task" name="task" list="task_list" autocomplete=off> </p>
+                <datalist id="task_list">
+                    {% for task in data.tasks %}
+                        <option value="{{task.name}}" />
+                    {% endfor %}
+                </datalist>
+                <p> <button class="bg-black text-white px-4 py-2 mt-2">Add Task</button> </p>
+            </form>
+            ''', data={'tasks': db.get('tasks')})
     else:
         return '<p class="bg-red-700 p-10">This is not a known action</p>'
 
 @app.route('/grid')
 def grid():
     return render_template('grid.html')
+
+@app.get('/oob')
+@app.post('/oob')
+def oob():
+    if request.method == 'POST': 
+        action = request.form['action']
+        if action == 'swap_a_and_b':
+            return '''<div id="A" class="bg-red-400 m-2" hx-swap-oob="true">A</div>
+                    <div id="D" class="bg-red-400 m-2" hx-swap-oob="true">D</div>
+            '''
+        elif action == 'swap_b':
+            return '''<div id="B" class="bg-red-400 m-2" hx-swap-oob="true">B</div>'''
+        elif action == 'swap_c_and_d':
+            return '''<div id="C" class="bg-red-400 m-2" hx-swap-oob="true">C</div>
+                    <div id="D" class="bg-red-400 m-2" hx-swap-oob="true">D</div>
+            '''
+        elif action == 'reset':
+            return ''' 
+                <section id="nodes" hx-swap-oob="true" class="ml-4">
+                    <div id="A" hx-swap-oob="true" class="bg-gray-200 m-2">A</div>
+                    <div id="B" class="bg-gray-200 m-2">B</div>
+                    <div id="C" class="bg-gray-200 m-2">C</div>
+                    <div id="D" class="bg-gray-200 m-2">D</div>
+                </section>
+          '''
+        else:
+            return ''
+
+    PAGE = '''
+     <!-- html -->
+        <body>
+          <section id="nodes" hx-swap-oob="true" class="ml-4">
+            <div id="A" hx-swap-oob="true" class="bg-gray-200 m-2">A</div>
+            <div id="B" class="bg-gray-200 m-2">B</div>
+            <div id="C" class="bg-gray-200 m-2">C</div>
+            <div id="D" class="bg-gray-200 m-2">D</div>
+          </section>
+          <section class="ml-4 flex flex-col">
+            <button class="border-2 m-2 p-2" 
+               hx-post="/oob" 
+               hx-swap="none"
+               hx-vals='{ "action": "swap_a_and_b" }'>Swap A and D</button>
+            <button class="border-2 m-2 p-2" 
+               hx-post="/oob" 
+               hx-swap="none"
+               hx-vals='{ "action": "swap_b" }'>Swap B</button>
+            <button class="border-2 m-2 p-2" 
+               hx-post="/oob" 
+               hx-swap="none"
+               hx-vals='{ "action": "swap_c_and_d" }'>Swap C and D</button>
+            <button class="border-2 m-2 p-2" 
+               hx-post="/oob" 
+               hx-swap="none"
+               hx-vals='{ "action": "reset" }'>Reset</button>
+          </section>
+        </body>
+     <!-- !html -->
+    '''
+    return render_template_string(HEAD + PAGE)
 
 @app.route('/')
 def index():
@@ -129,18 +200,19 @@ def index():
                 {% endfor%}
                 </section>
                 <section id="allocate_task">
+                    <h1 class="ml-10 text-2xl font-bold">Add Task</h1>
                     <form class="ml-10" 
                        hx-post="/api"
                        hx-vals='{ "action": "add_task" }'>
-                      <p> <label for="add_task">Add Task</label> </p>
-                      <p> <input class="border-2" type="text" id="add_task" name="task" list="task_list" autocomplete=off> </p>
+                      <p> <input class="border-2" placeholder="add task..." type="text" id="add_task" name="task" list="task_list" autocomplete=off> </p>
                         <datalist id="task_list">
-                            <option value="build pebbles app" />
-                            <option value="research Alicea course" />
+                            {% for task in data.tasks %}
+                              <option value="{{task.name}}" />
+                            {% endfor %}
                         </datalist>
                       <p> <button class="bg-black text-white px-4 py-2 mt-2">Add Task</button> </p>
                     </form>
                 </section>
             </body>
     '''
-    return render_template_string(HEAD + PAGE, data={'pebbles': db.get('pebbles')})
+    return render_template_string(HEAD + PAGE, data={'pebbles': db.get('pebbles'), 'tasks': db.get('tasks')})
